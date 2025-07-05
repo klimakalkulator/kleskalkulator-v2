@@ -92,4 +92,209 @@
       font-size: 1rem;
       font-family: var(--font-family);
       appearance: none;
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 16px 12px;
+      cursor: pointer;
+    }
+
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .radio-group label, .scale-group label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 400;
+        cursor: pointer;
+    }
+
+    .scale-group {
+        display: flex;
+        justify-content: space-between;
+    }
+    .scale-group input {
+        margin-left: -5px; /* Adjust visual alignment */
+    }
+
+    input[type="radio"] {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--card-border-color);
+        border-radius: 50%;
+        position: relative;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    input[type="radio"]:checked {
+        border-color: var(--primary-brand-color);
+    }
+
+    input[type="radio"]:checked::before {
+        content: '';
+        display: block;
+        width: 10px;
+        height: 10px;
+        background-color: var(--primary-brand-color);
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* --- Buttons --- */
+    button {
+      width: 100%;
+      background-color: var(--primary-brand-color);
+      color: white;
+      font-family: var(--font-family);
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s, opacity 0.2s;
+    }
+
+    button:hover {
+      background-color: #1e423b;
+    }
+
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    #finish-and-save-btn {
+        display: block;
+        max-width: 300px;
+        margin: 40px auto 0;
+    }
+
+    /* --- Result & Overview --- */
+    .result-display {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid var(--card-border-color);
+    }
+
+    .result-text {
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .result-text span {
+        display: block;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--primary-brand-color);
+        margin-top: 5px;
+    }
+
+    .result-icon {
+        width: 60px;
+        height: 60px;
+        flex-shrink: 0;
+    }
+
+    .result-icon.droplet {
+        background-color: #cce2de; /* Placeholder color */
+        border-radius: 50% 50% 50% 10%;
+        transform: rotate(45deg);
+    }
+    .result-icon.bucket {
+        background-color: #8db5ad; /* Placeholder color */
+        border-radius: 4px;
+    }
+
+    #overview-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 20px 0;
+        min-height: 50px;
+    }
+
+    #overview-list li {
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    /* --- Responsive Design --- */
+    @media (max-width: 900px) {
+      .kalkulator-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="kalkulator-wrapper">
+    <h1>KLESKALKULATOREN</h1>
+
+    <div class="kalkulator-grid">
+      <div class="card">
+        <h2>Forbruksvaner</h2>
+        <form id="habits-form">
+          <div class="form-group">
+            <label>Hvor ofte kjøper du klær?</label>
+            <div class="radio-group">
+              <label><input type="radio" name="frequency" value="Aldri" required> Aldri</label>
+              <label><input type="radio" name="frequency" value="Sjelden"> Sjelden</label>
+              <label><input type="radio" name="frequency" value="Veldig ofte"> Veldig ofte</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Hvor viktig er miljøpåvirkning når du velger klær?</label>
+            <div class="scale-group">
+              <label>1<input type="radio" name="importance" value="1" required></label>
+              <label>2<input type="radio" name="importance" value="2"></label>
+              <label>3<input type="radio" name="importance" value="3"></label>
+              <label>4<input type="radio" name="importance" value="4"></label>
+              <label>5<input type="radio" name="importance" value="5"></label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Hva påvirker dine valg mest?</label>
+            <div class="radio-group">
+              <label><input type="radio" name="influence" value="Pris" required> Pris</label>
+              <label><input type="radio" name="influence" value="Stil"> Stil</label>
+              <label><input type="radio" name="influence" value="Kvalitet"> Kvalitet</label>
+              <label><input type="radio" name="influence" value="Merke"> Merke</label>
+              <label><input type="radio" name="influence" value="Miljøhensyn/familie"> Miljøhensyn/familie</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Hvordan anvender du klær du ikke bruker?</label>
+            <div class="radio-group">
+              <label><input type="radio" name="disposal" value="Kaster" required> Kaster</label>
+              <label><input type="radio" name="disposal" value="Gir bort"> Gir bort</label>
+              <label><input type="radio" name="disposal" value="Selger"> Selger</label>
+              <label><input type="radio" name="disposal" value="Leverer til gjenvinning"> Leverer til gjenvinning</label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Har du endret dine klesvaner de siste 5 årene?</label>
+            <div class="radio-group">
+              <label><input type="radio" name="changed_habits" value="Ja" required> Ja</label>
+              <label><input type="radio" name="changed_habits" value="Nei"> Nei</label>
+              <label><input type="radio" name="changed_habits" value="Vet ikke"> Vet ikke</label>
+            </div>
+          </div>
+        </form>
+      </div>
