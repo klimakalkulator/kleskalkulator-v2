@@ -1,18 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- SUPABASE SETUP ---
-    // ACTION: Paste your Supabase URL and Anon Key here
-    const supabaseUrl = 'YOUR_SUPABASE_URL'; 
-    const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
-
-    // A check to ensure user has filled in credentials
-    if (supabaseUrl === 'YOUR_SUPABASE_URL' || supabaseKey === 'YOUR_SUPABASE_ANON_KEY') {
-        document.getElementById('error-message').textContent = 'Supabase-nøkler er ikke konfigurert i stats.js. Kan ikke hente data.';
-        document.getElementById('error-message').style.display = 'block';
-        return;
-    }
+    const supabaseUrl = 'https://xnedmhnxwylntekmjcqq.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhuZWRtaG54d3lsbnRla21qY3FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzEyMDgsImV4cCI6MjA2NzMwNzIwOH0.EHj6hw5PN4vwwF0PABXCldMRDIED-LaCnvoNV89izX0';
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // --- DATA MODELS (Must match script.js for calculations) ---
+    // --- DATA MODELS ---
     const fabricArea = {
         't-skjorte': 0.75, 'jeans': 1.5, 'bukse': 1.4, 'genser': 1.6, 'joggedress': 2.5,
         'treningstights': 0.8, 'kjole': 2.0, 'skjorte': 1.2, 'jakke': 2.2, 'badetøy': 0.2
@@ -29,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- MAIN FUNCTION ---
     async function loadStatistics() {
         try {
-            // 1. Fetch data from Supabase
             const { data, error } = await supabase
                 .from('submissions')
                 .select('cart_data');
@@ -38,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!data || data.length === 0) {
                 document.getElementById('error-message').textContent = 'Ingen data er sendt inn ennå. Prøv kalkulatoren først!';
                 document.getElementById('error-message').style.display = 'block';
-                // Display 0 for all stats
                 renderStats({
                     totalSubmissions: 0,
                     totalGarments: 0,
@@ -50,11 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 2. Process the data
             const allItems = data.flatMap(submission => submission.cart_data);
             const stats = calculateStats(allItems, data.length);
             
-            // 3. Render the statistics
             renderStats(stats);
 
         } catch (error) {
@@ -115,6 +103,5 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('max-decay').textContent = `${stats.maxDecay} år`;
     }
 
-    // --- INITIATE LOADING ---
     loadStatistics();
 });
