@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klimakalkulator for Klær</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url("tree-nature-grass-branch-plant-photography-424733-pxhere.com.jpg") no-repeat center center fixed;
+            background-size: cover;
+            background-blend-mode: overlay;
+            background-color: rgba(102, 126, 234, 0.3);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .start-section {
+            text-align: center;
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.3);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(46, 204, 113, 0.4);
+        }
+
+        .calculator-section {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .add-btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .shopping-cart {
+            margin-top: 30px;
+        }
+
+        .cart-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #3498db;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .remove-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .remove-btn:hover {
+            background: #c0392b;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(45deg, #26a69a, #00897b);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 20px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(38, 166, 154, 0.3);
+        }
+
+        .calculate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+        }
+
+        .result-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .comparison {
+            font-style: italic;
+            margin-top: 10px;
+            color: #ecf0f1;
+        }
+
+        .empty-cart {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🌍 Klimakalkulator for Klær</h1>
+            
+            <div class="start-section" id="startSection">
+                <p style="margin-bottom: 20px; font-size: 18px; color: #7f8c8d;">
+                    Finn ut hvor mye klærne dine koster miljøet
+                </p>
+                <button class="start-btn" onclick="startCalculator()">
+                    Start undersøkelsen
+                </button>
+            </div>
+
+            <div class="calculator-section" id="calculatorSection">
+                <h2 style="margin-bottom: 20px; color: #2c3e50;">Legg til klær</h2>
+                
+                <div class="form-group">
+                    <label for="clothingType">Type plagg:</label>
+                    <select id="clothingType">
+                        <option value="t-skjorte">T-skjorte</option>
+                        <option value="jeans">Jeans</option>
+                        <option value="bukse">Bukse</option>
+                        <option value="genser">Genser</option>
+                        <option value="joggedress">Joggedress</option>
+                        <option value="treningstights">Treningstights</option>
+                        <option value="kjole">Kjole</option>
+                        <option value="skjorte">Skjorte</option>
+                        <option value="jakke">Jakke</option>
+                        <option value="badetøy">Badetøy</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="material">Materiale:</label>
+                    <select id="material">
+                        <option value="bomull">Bomull</option>
+                        <option value="ull">Ull</option>
+                        <option value="polyester">Polyester</option>
+                        <option value="akryl">Akryl</option>
+                        <option value="viskose">Viskose</option>
+                        <option value="elastan">Elastan</option>
+                        <option value="silke">Silke</option>
+                        <option value="lin">Lin</option>
+                        <option value="resirkulert polyester">Resirkulert polyester</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Antall:</label>
+                    <input type="number" id="quantity" min="1" max="50" value="1">
+                </div>
+
+                <button class="add-btn" onclick="addToCart()">
+                    Legg til
+                </button>
+
+                <div class="shopping-cart">
+                    <h3 style="margin-bottom: 15px; color: #2c3e50;">Mine klær</h3>
+                    <div id="cartItems">
+                        <div class="empty-cart">
+                            Listen er tom. Legg til klær for å starte!
+                        </div>
+                    </div>
+                    
+                    <button class="calculate-btn" id="calculateBtn" onclick="calculateResults()" disabled>
+                        Beregn miljøpåvirkning
+                    </button>
+                </div>
+
+                <div class="results" id="results">
+                    <h3 style="margin-bottom: 20px;">📊 Resultat</h3>
+                    <div id="resultContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data for calculations
+        const clothingAreas = {
+            't-skjorte': 4000,
+            'jeans': 12000,
+            'bukse': 8000,
+            'genser': 6000,
+            'joggedress': 14000,
+            'treningstights': 5000,
+            'kjole': 8000,
+            'skjorte': 5000,
+            'jakke': 10000,
+            'badetøy': 1500
+        };
+
+        const materialData = {
+            'bomull': { co2PerSqCm: 0.008, waterPerSqCm: 2.0, breakdownYears: 5 },
+            'ull': { co2PerSqCm: 0.003, waterPerSqCm: 1.5, breakdownYears: 2 },
+            'polyester': { co2PerSqCm: 0.012, waterPerSqCm: 0.5, breakdownYears: 200 },
+            'akryl': { co2PerSqCm: 0.010, waterPerSqCm: 0.6, breakdownYears: 100 },
+            'viskose': { co2PerSqCm: 0.006, waterPerSqCm: 1.0, breakdownYears: 4 },
+            'elastan': { co2PerSqCm: 0.015, waterPerSqCm: 0.8, breakdownYears: 80 },
+            'silke': { co2PerSqCm: 0.011, waterPerSqCm: 1.2, breakdownYears: 2 },
+            'lin': { co2PerSqCm: 0.004, waterPerSqCm: 0.9, breakdownYears: 2 },
+            'resirkulert polyester': { co2PerSqCm: 0.007, waterPerSqCm: 0.4, breakdownYears: 200 }
+        };
+
+        let cart = [];
+
+        function startCalculator() {
+            document.getElementById('startSection').style.display = 'none';
+            document.getElementById('calculatorSection').style.display = 'block';
+        }
+
+        function addToCart() {
+            const clothingType = document.getElementById('clothingType').value;
+            const material = document.getElementById('material').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+
+            if (quantity > 0) {
+                const item = {
+                    id: Date.now(),
+                    clothingType,
+                    material,
+                    quantity
+                };
+
+                cart.push(item);
+                updateCartDisplay();
+                
+                // Reset form
+                document.getElementById('quantity').value = 1;
+            }
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
+            const cartContainer = document.getElementById('cartItems');
+            const calculateBtn = document.getElementById('calculateBtn');
+
+            if (cart.length === 0) {
+                cartContainer.innerHTML = '<div class="empty-cart">Listen er tom. Legg til klær for å starte!</div>';
+                calculateBtn.disabled = true;
+            } else {
+                cartContainer.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <strong>${item.quantity}x ${item.clothingType}</strong> - ${item.material}
+                        </div>
+                        <button class="remove-btn" onclick="removeFromCart(${item.id})">
+                            Fjern
+                        </button>
+                    </div>
+                `).join('');
+                calculateBtn.disabled = false;
+            }
+        }
+
+        function calculateResults() {
+            let totalCO2 = 0;
+            let totalWater = 0;
+            let maxBreakdown = 0;
+
+            cart.forEach(item => {
+                const area = clothingAreas[item.clothingType];
+                const material = materialData[item.material];
+                
+                const itemCO2 = area * material.co2PerSqCm * item.quantity;
+                const itemWater = area * material.waterPerSqCm * item.quantity;
+                
+                totalCO2 += itemCO2;
+                totalWater += itemWater;
+                maxBreakdown = Math.max(maxBreakdown, material.breakdownYears);
+            });
+
+            // Round values
+            totalCO2 = Math.round(totalCO2);
+            totalWater = Math.round(totalWater);
+
+            displayResults(totalCO2, totalWater, maxBreakdown);
+            
+            // Store data anonymously
+            storeAnonymousData(totalCO2, totalWater, maxBreakdown, cart.length);
+        }
+
+        function displayResults(co2, water, breakdown) {
+            const resultContent = document.getElementById('resultContent');
+            
+            // CO2 comparisons
+            let co2Comparison = '';
+            if (co2 >= 150) {
+                co2Comparison = 'Dette tilsvarer en flyreise fra Oslo til Thailand! ✈️';
+            } else if (co2 >= 100) {
+                co2Comparison = 'Dette tilsvarer en flyreise fra Oslo til Spania! ✈️';
+            } else if (co2 >= 60) {
+                co2Comparison = 'Dette tilsvarer en flyreise fra Oslo til Trondheim! ✈️';
+            } else if (co2 >= 30) {
+                co2Comparison = 'Dette tilsvarer halvparten av en flyreise Oslo-Trondheim! ✈️';
+            } else {
+                co2Comparison = `Dette tilsvarer å kjøre ${Math.round(co2 / 0.14)} km med bil! 🚗`;
+            }
+
+            // Water comparison
+            const daysOfWater = Math.round(water / 2);
+            const waterComparison = `Dette tilsvarer drikkevann for ${daysOfWater} dager! 💧`;
+
+            resultContent.innerHTML = `
+                <div style="text-align: center; margin-bottom: 25px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                    <h4 style="color: #ecf0f1; margin-bottom: 10px;">🙏 Takk for deltakelsen!</h4>
+                    <p style="color: #bdc3c7; font-size: 14px;">Dine svar er sendt anonymt for forskningsformål</p>
+                </div>
+
+                <div class="result-item">
+                    <h4>🌡️ CO₂-utslipp</h4>
+                    <div class="result-value">${co2} kg CO₂</div>
+                    <div class="comparison">${co2Comparison}</div>
+                </div>
+
+                <div class="result-item">
+                    <h4>💧 Vannforbruk</h4>
+                    <div class="result-value">${water.toLocaleString()} liter</div>
+                    <div class="comparison">${waterComparison}</div>
+                </div>
+
+                <div class="result-item">
+                    <h4>⏰ Nedbrytning i naturen</h4>
+                    <div class="result-value">${breakdown} år</div>
+                    <div class="comparison">Tid før klærne brytes ned naturlig</div>
+                </div>
+            `;
+
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function storeAnonymousData(co2, water, breakdown, itemCount) {
+            // In a real application, this would send data to a server
+            // For now, we'll just store it in memory and log it
+            const data = {
+                timestamp: new Date().toISOString(),
+                co2Emissions: co2,
+                waterUsage: water,
+                breakdownTime: breakdown,
+                itemCount: itemCount,
+                cartItems: cart.map(item => ({
+                    clothingType: item.clothingType,
+                    material: item.material,
+                    quantity: item.quantity
+                }))
+            };
+
+            // Store in memory (in a real app, this would be sent to a database)
+            if (!window.calculatorData) {
+                window.calculatorData = [];
+            }
+            window.calculatorData.push(data);
+            
+            console.log('Anonymous data stored:', data);
+        }
+
+        // Initialize
+        updateCartDisplay();
+    </script>
+</body>
+</html>

@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klimakalkulator for Klær</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url("tree-nature-grass-branch-plant-photography-424733-pxhere.com.jpg") no-repeat center center fixed;
+            background-size: cover;
+            background-color: rgba(200, 210, 180, 0.8);
+            background-blend-mode: overlay;
+            min-height: 100vh;
+            padding: 20px;
+            color: #2d4a3e;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            font-weight: bold;
+            color: #2d4a3e;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(220, 230, 200, 0.9);
+            border: 2px solid #5a7c65;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: #5a7c65;
+            color: white;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d4a3e;
+        }
+
+        .form-group select, 
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #5a7c65;
+            border-radius: 4px;
+            font-size: 16px;
+            background: white;
+        }
+
+        .form-group select:focus, 
+        .form-group input[type="number"]:focus {
+            outline: none;
+            border-color: #2d4a3e;
+        }
+
+        .btn {
+            background: #5a7c65;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #2d4a3e;
+        }
+
+        .btn:disabled {
+            background: #a0a0a0;
+            cursor: not-allowed;
+        }
+
+        .btn-add {
+            background: #26a69a;
+            margin-top: 10px;
+        }
+
+        .btn-add:hover {
+            background: #00897b;
+        }
+
+        .clothing-list {
+            margin-top: 20px;
+        }
+
+        .clothing-item {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #5a7c65;
+            border-radius: 4px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .clothing-item-info {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .clothing-item-remove {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .clothing-item-remove:hover {
+            background: #c0392b;
+        }
+
+        .empty-list {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .result-card {
+            background: rgba(220, 230, 200, 0.95);
+            border: 2px solid #5a7c65;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .result-summary {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .result-number {
+            font-size: 4em;
+            font-weight: bold;
+            color: #2d4a3e;
+            margin: 10px 0;
+        }
+
+        .result-unit {
+            font-size: 1.2em;
+            color: #5a7c65;
+            margin-bottom: 15px;
+        }
+
+        .result-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: #5a7c65;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+        }
+
+        .overview-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .overview-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(90, 124, 101, 0.2);
+            font-size: 14px;
+        }
+
+        .overview-list li:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-text {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-style: italic;
+            color: #2d4a3e;
+        }
+
+        .start-screen {
+            grid-column: 1 / -1;
+            text-align: center;
+        }
+
+        .start-btn {
+            background: #26a69a;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .start-btn:hover {
+            background: #00897b;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: normal;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        .scale-group {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .scale-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border: 3px solid #5a7c65;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 0;
+            transition: all 0.3s ease;
+            position: relative;
+            background: white;
+        }
+
+        .scale-label span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .scale-label:hover {
+            background: rgba(90, 124, 101, 0.1);
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(90, 124, 101, 0.3);
+        }
+
+        .scale-label input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .scale-label input[type="radio"]:checked + span {
+            color: white;
+        }
+
+        .scale-label:has(input[type="radio"]:checked) {
+            background: #5a7c65;
+            color: white;
+            transform: scale(1.15);
+            box-shadow: 0 6px 16px rgba(90, 124, 101, 0.4);
+        }
+
+        .scale-description {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #7f8c8d;
+            font-style: italic;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: normal;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        .thank-you {
+            background: rgba(38, 166, 154, 0.1);
+            border: 2px solid #26a69a;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            body {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>KLESKALKULATOREN</h1>
+    </div>
+
+    <div class="main-container">
+        <!-- Start Screen -->
+        <div class="start-screen" id="startScreen">
+            <div class="card">
+                <div class="card-header">Velkommen til Kleskalkulatoren</div>
+                <div class="card-content">
+                    <p style="margin-bottom: 20px; font-size: 18px;">
+                        Finn ut hvor mye klærne dine koster miljøet
+                    </p>
+                    <button class="start-btn" onclick="showHabitsForm()">
+                        Start undersøkelsen
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Habits Form -->
+        <div class="habits-section" id="habitsSection" style="display: none;">
+            <div class="card" style="grid-column: 1 / -1;">
+                <div class="card-header">Forbruksvaner</div>
+                <div class="card-content">
+                    <div class="form-group">
+                        <label>Hvor ofte kjøper du klær?</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="frequency" value="aldri"> Aldri
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="frequency" value="sjelden"> Sjelden
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="frequency" value="veldig ofte"> Veldig ofte
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hvor viktig er miljøpåvirkning når du velger klær?</label>
+                        <div class="scale-group">
+                            <label class="scale-label">
+                                <input type="radio" name="environment" value="1">
+                                <span>1</span>
+                            </label>
+                            <label class="scale-label">
+                                <input type="radio" name="environment" value="2">
+                                <span>2</span>
+                            </label>
+                            <label class="scale-label">
+                                <input type="radio" name="environment" value="3">
+                                <span>3</span>
+                            </label>
+                            <label class="scale-label">
+                                <input type="radio" name="environment" value="4">
+                                <span>4</span>
+                            </label>
+                            <label class="scale-label">
+                                <input type="radio" name="environment" value="5">
+                                <span>5</span>
+                            </label>
+                        </div>
+                        <div class="scale-description">
+                            <span>Ikke viktig</span>
+                            <span>Svært viktig</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hva påvirker dine valg mest?</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="influences" value="pris"> Pris
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="influences" value="stil"> Stil
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="influences" value="kvalitet"> Kvalitet
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="influences" value="merke"> Merke
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="influences" value="miljøhensyn"> Miljøhensyn
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="influences" value="familie"> Familie
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hvordan anvender du klær du ikke bruker?</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="disposal" value="kaster"> Kaster
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="disposal" value="gir bort"> Gir bort
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="disposal" value="selger"> Selger
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="disposal" value="leverer til gjenvinning"> Leverer til gjenvinning
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Har du endret dine klesvaner de siste 5 årene?</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="changed" value="ja"> Ja
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="changed" value="nei"> Nei
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="changed" value="vet ikke"> Vet ikke
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="submitHabitsAndContinue()" style="margin-top: 20px;">
+                        Neste: Registrer plagg
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculator Section -->
+        <div class="calculator-section" id="calculatorSection" style="display: none;">
+            <!-- Left Column - Input Form -->
+            <div class="card">
+                <div class="card-header">Registrer plagg</div>
+                <div class="card-content">
+                    <div class="form-group">
+                        <label for="clothingType">Plaggtype</label>
+                        <select id="clothingType">
+                            <option value="">Velg plagg</option>
+                            <option value="t-skjorte">T-skjorte</option>
+                            <option value="jeans">Jeans</option>
+                            <option value="bukse">Bukse</option>
+                            <option value="genser">Genser</option>
+                            <option value="joggedress">Joggedress</option>
+                            <option value="treningstights">Treningstights</option>
+                            <option value="kjole">Kjole</option>
+                            <option value="skjorte">Skjorte</option>
+                            <option value="jakke">Jakke</option>
+                            <option value="badetøy">Badetøy</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="material">Materialtype</label>
+                        <select id="material">
+                            <option value="">Velg materiale</option>
+                            <option value="bomull">Bomull</option>
+                            <option value="ull">Ull</option>
+                            <option value="polyester">Polyester</option>
+                            <option value="akryl">Akryl</option>
+                            <option value="viskose">Viskose</option>
+                            <option value="elastan">Elastan</option>
+                            <option value="silke">Silke</option>
+                            <option value="lin">Lin</option>
+                            <option value="resirkulert polyester">Resirkulert polyester</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantity">Antall</label>
+                        <input type="number" id="quantity" min="1" max="50" value="1">
+                    </div>
+
+                    <button class="btn btn-add" onclick="addToCart()">
+                        Legg til plagg
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Column - Overview -->
+            <div class="card">
+                <div class="card-header">Oversikt</div>
+                <div class="card-content">
+                    <div id="clothingList">
+                        <div class="empty-list">
+                            Listen er tom. Legg til klær for å starte!
+                        </div>
+                    </div>
+
+                    <div class="clothing-list">
+                        <button class="btn" id="calculateBtn" onclick="calculateResults()" disabled>
+                            Analyser miljøpåvirkning
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <!-- Thank You Message -->
+            <div class="thank-you" id="thankYou" style="grid-column: 1 / -1;">
+                <h3 style="color: #26a69a; margin-bottom: 10px;">🙏 Takk for deltakelsen!</h3>
+                <p style="color: #2d4a3e;">Dine svar er sendt anonymt for forskningsformål</p>
+            </div>
+
+            <!-- CO2 Results -->
+            <div class="result-card">
+                <div class="card-header">Total CO₂-utslipp</div>
+                <div class="result-summary">
+                    <div class="result-icon">🌡️</div>
+                    <div class="result-number" id="co2Result">0</div>
+                    <div class="result-unit">kg CO₂</div>
+                    <div class="comparison-text" id="co2Comparison"></div>
+                </div>
+            </div>
+
+            <!-- Water Results -->
+            <div class="result-card">
+                <div class="card-header">Total vannforbruk</div>
+                <div class="result-summary">
+                    <div class="result-icon">💧</div>
+                    <div class="result-number" id="waterResult">0</div>
+                    <div class="result-unit">liter</div>
+                    <div class="comparison-text" id="waterComparison"></div>
+                </div>
+            </div>
+
+            <!-- Breakdown Results -->
+            <div class="result-card" style="grid-column: 1 / -1;">
+                <div class="card-header">Nedbrytning i naturen</div>
+                <div class="result-summary">
+                    <div class="result-icon">⏰</div>
+                    <div class="result-number" id="breakdownResult">0</div>
+                    <div class="result-unit">år</div>
+                    <div class="comparison-text">Tid før klærne brytes ned naturlig</div>
+                </div>
+            </div>
+
+            <!-- Overview -->
+            <div class="card" style="grid-column: 1 / -1;">
+                <div class="card-header">Detaljert oversikt</div>
+                <div class="card-content">
+                    <ul class="overview-list" id="detailedOverview"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data for calculations
+        const clothingAreas = {
+            't-skjorte': 4000,
+            'jeans': 12000,
+            'bukse': 8000,
+            'genser': 6000,
+            'joggedress': 14000,
+            'treningstights': 5000,
+            'kjole': 8000,
+            'skjorte': 5000,
+            'jakke': 10000,
+            'badetøy': 1500
+        };
+
+        const materialData = {
+            'bomull': { co2PerSqCm: 0.008, waterPerSqCm: 2.0, breakdownYears: 5 },
+            'ull': { co2PerSqCm: 0.003, waterPerSqCm: 1.5, breakdownYears: 2 },
+            'polyester': { co2PerSqCm: 0.012, waterPerSqCm: 0.5, breakdownYears: 200 },
+            'akryl': { co2PerSqCm: 0.010, waterPerSqCm: 0.6, breakdownYears: 100 },
+            'viskose': { co2PerSqCm: 0.006, waterPerSqCm: 1.0, breakdownYears: 4 },
+            'elastan': { co2PerSqCm: 0.015, waterPerSqCm: 0.8, breakdownYears: 80 },
+            'silke': { co2PerSqCm: 0.011, waterPerSqCm: 1.2, breakdownYears: 2 },
+            'lin': { co2PerSqCm: 0.004, waterPerSqCm: 0.9, breakdownYears: 2 },
+            'resirkulert polyester': { co2PerSqCm: 0.007, waterPerSqCm: 0.4, breakdownYears: 200 }
+        };
+
+        let cart = [];
+        let habitsData = {};
+
+        function showHabitsForm() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('habitsSection').style.display = 'contents';
+        }
+
+        function submitHabitsAndContinue() {
+            // Collect habits data
+            const frequency = document.querySelector('input[name="frequency"]:checked')?.value;
+            const environment = document.querySelector('input[name="environment"]:checked')?.value;
+            const influences = Array.from(document.querySelectorAll('input[name="influences"]:checked')).map(cb => cb.value);
+            const disposal = Array.from(document.querySelectorAll('input[name="disposal"]:checked')).map(cb => cb.value);
+            const changed = document.querySelector('input[name="changed"]:checked')?.value;
+
+            // Validate required fields
+            if (!frequency || !environment || !changed) {
+                alert('Vennligst besvar alle spørsmålene med enkeltvalg');
+                return;
+            }
+
+            // Store habits data
+            habitsData = {
+                frequency,
+                environment: parseInt(environment),
+                influences,
+                disposal,
+                changed
+            };
+
+            startCalculator();
+        }
+
+        function startCalculator() {
+            document.getElementById('habitsSection').style.display = 'none';
+            document.getElementById('calculatorSection').style.display = 'contents';
+        }
+
+        function addToCart() {
+            const clothingType = document.getElementById('clothingType').value;
+            const material = document.getElementById('material').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+
+            if (!clothingType || !material || quantity < 1) {
+                alert('Vennligst fyll ut alle feltene');
+                return;
+            }
+
+            const item = {
+                id: Date.now(),
+                clothingType,
+                material,
+                quantity
+            };
+
+            cart.push(item);
+            updateCartDisplay();
+            
+            // Reset form
+            document.getElementById('clothingType').value = '';
+            document.getElementById('material').value = '';
+            document.getElementById('quantity').value = 1;
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
+            const cartContainer = document.getElementById('clothingList');
+            const calculateBtn = document.getElementById('calculateBtn');
+
+            if (cart.length === 0) {
+                cartContainer.innerHTML = '<div class="empty-list">Listen er tom. Legg til klær for å starte!</div>';
+                calculateBtn.disabled = true;
+            } else {
+                cartContainer.innerHTML = cart.map((item, index) => `
+                    <div class="clothing-item">
+                        <div class="clothing-item-info">
+                            <strong>${index + 1}. ${item.clothingType} – ${item.material}</strong>
+                            ${item.quantity > 1 ? ` (${item.quantity} stk)` : ''}
+                        </div>
+                        <button class="clothing-item-remove" onclick="removeFromCart(${item.id})">
+                            Fjern
+                        </button>
+                    </div>
+                `).join('');
+                calculateBtn.disabled = false;
+            }
+        }
+
+        function calculateResults() {
+            let totalCO2 = 0;
+            let totalWater = 0;
+            let maxBreakdown = 0;
+
+            cart.forEach(item => {
+                const area = clothingAreas[item.clothingType];
+                const material = materialData[item.material];
+                
+                const itemCO2 = area * material.co2PerSqCm * item.quantity;
+                const itemWater = area * material.waterPerSqCm * item.quantity;
+                
+                totalCO2 += itemCO2;
+                totalWater += itemWater;
+                maxBreakdown = Math.max(maxBreakdown, material.breakdownYears);
+            });
+
+            // Round values
+            totalCO2 = Math.round(totalCO2);
+            totalWater = Math.round(totalWater);
+
+            displayResults(totalCO2, totalWater, maxBreakdown);
+            
+            // Store data anonymously
+            storeAnonymousData(totalCO2, totalWater, maxBreakdown, cart.length);
+        }
+
+        function displayResults(co2, water, breakdown) {
+            // Show results section
+            document.getElementById('calculatorSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'contents';
+
+            // Update values
+            document.getElementById('co2Result').textContent = co2;
+            document.getElementById('waterResult').textContent = water.toLocaleString();
+            document.getElementById('breakdownResult').textContent = breakdown;
+
+            // CO2 comparisons
+            let co2Comparison = '';
+            if (co2 >= 150) {
+                co2Comparison = 'Dette tilsvarer en flyreise fra Oslo til Thailand! ✈️';
+            } else if (co2 >= 100) {
+                co2Comparison = 'Dette tilsvarer en flyreise fra Oslo til Spania! ✈️';
+            } else if (co2 >= 60) {
+                co2Comparison = 'Dette tilsvarer en flyreise fra Oslo til Trondheim! ✈️';
+            } else if (co2 >= 30) {
+                co2Comparison = 'Dette tilsvarer halvparten av en flyreise Oslo-Trondheim! ✈️';
+            } else {
+                co2Comparison = `Dette tilsvarer å kjøre ${Math.round(co2 / 0.14)} km med bil! 🚗`;
+            }
+
+            // Water comparison
+            const daysOfWater = Math.round(water / 2);
+            const waterComparison = `Dette tilsvarer drikkevann for ${daysOfWater} dager! 💧`;
+
+            document.getElementById('co2Comparison').textContent = co2Comparison;
+            document.getElementById('waterComparison').textContent = waterComparison;
+
+            // Detailed overview
+            const overview = cart.map((item, index) => {
+                const area = clothingAreas[item.clothingType];
+                const material = materialData[item.material];
+                const itemCO2 = Math.round(area * material.co2PerSqCm * item.quantity);
+                
+                return `<li>${index + 1}. ${item.clothingType} – ${item.material} – CO₂: ${itemCO2} kg</li>`;
+            }).join('');
+
+            document.getElementById('detailedOverview').innerHTML = overview;
+        }
+
+        function storeAnonymousData(co2, water, breakdown, itemCount) {
+            const data = {
+                timestamp: new Date().toISOString(),
+                habits: habitsData, // Include habits data
+                co2Emissions: co2,
+                waterUsage: water,
+                breakdownTime: breakdown,
+                itemCount: itemCount,
+                cartItems: cart.map(item => ({
+                    clothingType: item.clothingType,
+                    material: item.material,
+                    quantity: item.quantity
+                }))
+            };
+
+            // Store in memory (in a real app, this would be sent to a database)
+            if (!window.calculatorData) {
+                window.calculatorData = [];
+            }
+            window.calculatorData.push(data);
+            
+            console.log('Anonymous data stored:', data);
+        }
+
+        // Initialize
+        updateCartDisplay();
+    </script>
+</body>
+</html>
