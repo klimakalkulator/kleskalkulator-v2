@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kleskalkulatoren</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* --- Basic Setup --- */
+    :root {
+      --background-color: #F8F6F1;
+      --card-border-color: #E0E0E0;
+      --primary-text-color: #333333;
+      --primary-brand-color: #2A5B53;
+      --font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--background-color);
+      color: var(--primary-text-color);
+      margin: 0;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: 40px;
+    }
+
+    h2 {
+        font-weight: 600;
+        font-size: 1.4rem;
+        margin-top: 0;
+        margin-bottom: 25px;
+        border-bottom: 1px solid var(--card-border-color);
+        padding-bottom: 15px;
+    }
+
+    /* --- Layout --- */
+    .kalkulator-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .kalkulator-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      align-items: start;
+    }
+
+    .column-right {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .card {
+      background-color: white;
+      border: 1px solid var(--card-border-color);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* --- Forms --- */
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--card-border-color);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: var(--font-family);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='
