@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- SUPABASE SETUP ---
+    // --- SUPABASE SETUP (FIXED) ---
     const supabaseUrl = 'https://xnedmhnxwylntekmjcqq.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhuZWRtaG54d3lsbnRla21qY3FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzEyMDgsImV4cCI6MjA2NzMwNzIwOH0.EHj6hw5PN4vwwF0PABXCldMRDIED-LaCnvoNV89izX0';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    // Renamed the client variable to avoid naming conflict
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
     // --- DATA MODELS ---
     const fabricArea = {
@@ -21,7 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- MAIN FUNCTION ---
     async function loadStatistics() {
         try {
-            const { data, error } = await supabase
+            // Use the new client variable name
+            const { data, error } = await supabaseClient
                 .from('submissions')
                 .select('cart_data');
 
