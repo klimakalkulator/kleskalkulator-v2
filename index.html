@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Klimakalkulator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Klimakalkulator for klær</h1>
+    <button id="startBtn">Start undersøkelsen</button>
+    <div id="calculator-section" style="display:none;">
+      <form id="calcForm">
+        <label for="type">Type plagg:</label>
+        <select id="type">
+          <option value="t-skjorte">T-skjorte</option>
+          <option value="jeans">Jeans</option>
+          <option value="bukse">Bukse</option>
+          <option value="genser">Genser</option>
+          <option value="joggedress">Joggedress</option>
+          <option value="treningstights">Treningstights</option>
+          <option value="kjole">Kjole</option>
+          <option value="skjorte">Skjorte</option>
+          <option value="jakke">Jakke</option>
+          <option value="badetøy">Badetøy</option>
+        </select>
+
+        <label for="material">Materiale:</label>
+        <select id="material">
+          <option value="bomull">Bomull</option>
+          <option value="ull">Ull</option>
+          <option value="polyester">Polyester</option>
+          <option value="akryl">Akryl</option>
+          <option value="viskose">Viskose</option>
+          <option value="elastan">Elastan</option>
+          <option value="silke">Silke</option>
+          <option value="lin">Lin</option>
+          <option value="resirkulert polyester">Resirkulert polyester</option>
+        </select>
+
+        <label for="quantity">Antall:</label>
+        <input type="number" id="quantity" min="1" value="1"/>
+
+        <label for="source">Hvor kjøpt:</label>
+        <select id="source">
+          <option value="ny">Nytt i butikk</option>
+          <option value="brukt">Brukt</option>
+          <option value="arvet">Arvet</option>
+        </select>
+
+        <label for="age">Alder:</label>
+        <input type="number" id="age" min="0" />
+
+        <label for="gender">Kjønn:</label>
+        <select id="gender">
+          <option value="kvinne">Kvinne</option>
+          <option value="mann">Mann</option>
+          <option value="annet">Annet</option>
+        </select>
+
+        <button type="submit">Beregn</button>
+      </form>
+      <div id="result" class="result-box" style="display:none;"></div>
+    </div>
+  </div>
+  <script>
+    document.getElementById("startBtn").addEventListener("click", function() {
+      document.getElementById("calculator-section").style.display = "block";
+      this.style.display = "none";
+    });
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
