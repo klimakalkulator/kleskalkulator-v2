@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // --- SUPABASE SETUP ---
+  // --- SUPABASE SETUP (FIXED) ---
   const supabaseUrl = 'https://xnedmhnxwylntekmjcqq.supabase.co'; 
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhuZWRtaG54d3lsbnRla21qY3FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzEyMDgsImV4cCI6MjA2NzMwNzIwOH0.EHj6hw5PN4vwwF0PABXCldMRDIED-LaCnvoNV89izX0';
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+  // Renamed the client variable to avoid naming conflict
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
   // --- DATA MODELS ---
   const fabricArea = {
@@ -18,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'resirkulert polyester': { co2: 8, water: 20, decay: 200 }
   };
 
-  // --- EVENT LISTENERS AND CORE LOGIC (Unchanged) ---
+  // --- EVENT LISTENERS AND CORE LOGIC ---
   let shoppingCart = [];
   const startBtn = document.getElementById('startBtn');
   const calculatorSection = document.getElementById('calculator-section');
@@ -180,7 +181,8 @@ document.addEventListener('DOMContentLoaded', () => {
   
   async function submitDataForResearch(data) {
     try {
-        const { error } = await supabase
+        // Use the new client variable name
+        const { error } = await supabaseClient
             .from('submissions')
             .insert([{ cart_data: data }]);
         if (error) { throw error; }
