@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Supabase setup and other parts remain the same...
-  const supabaseUrl = 'YOUR_SUPABASE_URL'; 
-  const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
+  // --- SUPABASE SETUP ---
+  const supabaseUrl = 'https://xnedmhnxwylntekmjcqq.supabase.co'; 
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhuZWRtaG54d3lsbnRla21qY3FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzEyMDgsImV4cCI6MjA2NzMwNzIwOH0.EHj6hw5PN4vwwF0PABXCldMRDIED-LaCnvoNV89izX0';
   const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+  // --- DATA MODELS ---
   const fabricArea = {
     't-skjorte': 0.75, 'jeans': 1.5, 'bukse': 1.4, 'genser': 1.6, 'joggedress': 2.5,
     'treningstights': 0.8, 'kjole': 2.0, 'skjorte': 1.2, 'jakke': 2.2, 'badetøy': 0.2
@@ -17,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'resirkulert polyester': { co2: 8, water: 20, decay: 200 }
   };
 
-  // --- EVENT LISTENERS AND CORE LOGIC (Mostly unchanged) ---
+  // --- EVENT LISTENERS AND CORE LOGIC (Unchanged) ---
   let shoppingCart = [];
   const startBtn = document.getElementById('startBtn');
   const calculatorSection = document.getElementById('calculator-section');
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const cartItemsList = document.getElementById('cart-items');
   const calculateBtn = document.getElementById('calculateBtn');
   const resultBox = document.getElementById('result-box');
-  // ... (rest of the DOM elements and event listeners are the same)
+  
   startBtn.addEventListener('click', () => {
     calculatorSection.style.display = 'block';
     startBtn.style.display = 'none';
@@ -38,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const quantity = parseInt(document.getElementById('quantity').value);
 
     const item = {
-      id: Date.now(), // Unique ID for removal
+      id: Date.now(),
       type: clothingType,
       material: materialType,
       quantity: quantity
@@ -50,23 +51,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   calculateBtn.addEventListener('click', async () => {
-    // Disable button to prevent multiple submissions
     calculateBtn.disabled = true;
     calculateBtn.textContent = 'Beregner...';
-
-    // Submit data to Supabase before showing results
     await submitDataForResearch(shoppingCart);
-    
     calculateAndDisplayResults();
-
-    // Re-enable button after completion
     calculateBtn.disabled = false;
     calculateBtn.textContent = 'Beregn totalt utslipp';
   });
 
   function renderCart() {
     const cartPlaceholder = document.querySelector('#cart-items .placeholder');
-    cartItemsList.innerHTML = ''; // Clear the list
+    cartItemsList.innerHTML = ''; 
 
     if (shoppingCart.length === 0) {
         if (cartPlaceholder) {
@@ -88,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
       cartItemsList.appendChild(li);
     });
 
-    // Add event listeners to new remove buttons
     document.querySelectorAll('.remove-btn').forEach(button => {
         button.addEventListener('click', (e) => {
             const itemId = parseInt(e.target.getAttribute('data-id'));
@@ -99,8 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     calculateBtn.style.display = 'block';
   }
-
-  // --- UPDATED AND NEW FUNCTIONS ---
 
   function calculateAndDisplayResults() {
     let totalCo2 = 0;
@@ -119,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // NEW: Using the more granular comparison functions
     const co2Comparison = getCo2Comparison(totalCo2);
     const waterComparison = getWaterComparison(totalWater);
 
@@ -133,18 +124,17 @@ document.addEventListener('DOMContentLoaded', () => {
       </ul>
       <div class="action-tips">
           <h4>Hva kan du gjøre?</h4>
-          <p>For å redusere fotavtrykket kan du vurdere å kjøpe brukt, reparere klær du allerede har, og velge materialer med lavere påvirkning. [cite_start]For syntetiske plagg, bruk en vaskepose for å fange opp mikroplast. [cite: 25, 49]</p>
+          <p>For å redusere fotavtrykket kan du vurdere å kjøpe brukt, reparere klær du allerede har, og velge materialer med lavere påvirkning. For syntetiske plagg, bruk en vaskepose for å fange opp mikroplast.</p>
       </div>
     `;
     resultBox.style.display = 'block';
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   }
 
-  // NEW: More granular CO2 comparison
   function getCo2Comparison(co2) {
-      const kmPerKgCo2 = 7.5; // Approx. km for 1 kg CO2 from a modern gasoline car
-      const flightOsloBergen = 70; [cite_start]// kg CO2 [cite: 7]
-      const flightOsloThailand = 1100; // kg CO2
+      const kmPerKgCo2 = 7.5; 
+      const flightOsloBergen = 70; 
+      const flightOsloThailand = 1100;
       
       if (co2 >= flightOsloThailand * 0.5) {
           const numFlights = (co2 / flightOsloThailand).toFixed(1);
@@ -156,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (co2 > 1) {
           const km = (co2 * kmPerKgCo2).toFixed(0);
-          return `Det tilsvarer en kjøretur på ca. [cite_start]<strong>${km} km</strong> med en bensinbil. [cite: 35]`;
+          return `Det tilsvarer en kjøretur på ca. <strong>${km} km</strong> med en bensinbil.`;
       }
       if (co2 > 0) {
           return `Selv små utslipp summerer seg opp over tid.`;
@@ -164,11 +154,10 @@ document.addEventListener('DOMContentLoaded', () => {
       return "";
   }
   
-  // NEW: More granular water comparison
   function getWaterComparison(water) {
-      const dailyDrinkingWater = 2; [cite_start]// Liters [cite: 13]
-      const showerWater = 100; [cite_start]// Liters for a 10-min shower [cite: 38]
-      const milkWater = 1000; [cite_start]// Liters for 1L of milk [cite: 41]
+      const dailyDrinkingWater = 2;
+      const showerWater = 100; 
+      const milkWater = 1000; 
 
       if (water >= 20000) {
           const yearsOfWater = (water / (dailyDrinkingWater * 365)).toFixed(1);
@@ -176,11 +165,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (water >= 5000) {
           const showers = Math.round(water / showerWater);
-          return `Det tilsvarer vannforbruket til ca. [cite_start]<strong>${showers}</strong> dusjer på 10 minutter. [cite: 38]`;
+          return `Det tilsvarer vannforbruket til ca. <strong>${showers}</strong> dusjer på 10 minutter.`;
       }
       if (water >= 1000) {
           const milkLiters = Math.round(water / milkWater);
-          [cite_start]return `Det er nok vann til å produsere <strong>${milkLiters} liter</strong> melk. [cite: 41]`;
+          return `Det er nok vann til å produsere <strong>${milkLiters} liter</strong> melk.`;
       }
       if (water > 0) {
         const daysOfWater = Math.round(water / dailyDrinkingWater);
@@ -201,6 +190,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Initial render call
   renderCart();
 });
