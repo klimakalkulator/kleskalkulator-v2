@@ -1,54 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // --- DATA MODELS ---
+  // Supabase setup and other parts remain the same...
+  const supabaseUrl = 'YOUR_SUPABASE_URL'; 
+  const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-  // Estimated fabric area in square meters (m^2) for each clothing type
   const fabricArea = {
-    't-skjorte': 0.75,
-    'jeans': 1.5,
-    'bukse': 1.4,
-    'genser': 1.6,
-    'joggedress': 2.5,
-    'treningstights': 0.8,
-    'kjole': 2.0,
-    'skjorte': 1.2,
-    'jakke': 2.2,
-    'badetøy': 0.2
+    't-skjorte': 0.75, 'jeans': 1.5, 'bukse': 1.4, 'genser': 1.6, 'joggedress': 2.5,
+    'treningstights': 0.8, 'kjole': 2.0, 'skjorte': 1.2, 'jakke': 2.2, 'badetøy': 0.2
   };
 
-  // Environmental cost per square meter of material
   const materialData = {
-    'bomull': { co2: 20, water: 6700, decay: 5 }, // kg CO2, Liters water, Years to decompose
-    'ull': { co2: 25, water: 8000, decay: 5 },
-    'polyester': { co2: 14, water: 50, decay: 200 },
-    'akryl': { co2: 16, water: 60, decay: 200 },
-    'viskose': { co2: 12, water: 3000, decay: 4 },
-    'elastan': { co2: 18, water: 2500, decay: 100 },
-    'silke': { co2: 22, water: 5000, decay: 4 },
-    'lin': { co2: 5, water: 2000, decay: 2 },
+    'bomull': { co2: 20, water: 6700, decay: 5 }, 'ull': { co2: 25, water: 8000, decay: 5 },
+    'polyester': { co2: 14, water: 50, decay: 200 }, 'akryl': { co2: 16, water: 60, decay: 200 },
+    'viskose': { co2: 12, water: 3000, decay: 4 }, 'elastan': { co2: 18, water: 2500, decay: 100 },
+    'silke': { co2: 22, water: 5000, decay: 4 }, 'lin': { co2: 5, water: 2000, decay: 2 },
     'resirkulert polyester': { co2: 8, water: 20, decay: 200 }
   };
-  
-  // Comparison data
-  const comparisonData = {
-      flightOsloBergen: 70, // kg CO2
-      flightOsloSpain: 275, // kg CO2
-      flightOsloThailand: 1100, // kg CO2
-      dailyDrinkingWater: 2 // Liters
-  };
 
-  // --- APPLICATION STATE ---
+  // --- EVENT LISTENERS AND CORE LOGIC (Mostly unchanged) ---
   let shoppingCart = [];
-
-  // --- DOM ELEMENTS ---
   const startBtn = document.getElementById('startBtn');
   const calculatorSection = document.getElementById('calculator-section');
   const addItemForm = document.getElementById('addItemForm');
   const cartItemsList = document.getElementById('cart-items');
   const calculateBtn = document.getElementById('calculateBtn');
   const resultBox = document.getElementById('result-box');
-  const cartPlaceholder = document.querySelector('#cart-items .placeholder');
-
-  // --- EVENT LISTENERS ---
+  // ... (rest of the DOM elements and event listeners are the same)
   startBtn.addEventListener('click', () => {
     calculatorSection.style.display = 'block';
     startBtn.style.display = 'none';
@@ -72,21 +49,29 @@ document.addEventListener('DOMContentLoaded', () => {
     addItemForm.reset();
   });
 
-  calculateBtn.addEventListener('click', () => {
-    // This is where you would send data to a database
-    // For now, it's anonymous as no personal data is collected
-    submitDataForResearch(shoppingCart);
+  calculateBtn.addEventListener('click', async () => {
+    // Disable button to prevent multiple submissions
+    calculateBtn.disabled = true;
+    calculateBtn.textContent = 'Beregner...';
+
+    // Submit data to Supabase before showing results
+    await submitDataForResearch(shoppingCart);
     
     calculateAndDisplayResults();
+
+    // Re-enable button after completion
+    calculateBtn.disabled = false;
+    calculateBtn.textContent = 'Beregn totalt utslipp';
   });
 
-  // --- FUNCTIONS ---
-  
   function renderCart() {
+    const cartPlaceholder = document.querySelector('#cart-items .placeholder');
     cartItemsList.innerHTML = ''; // Clear the list
 
     if (shoppingCart.length === 0) {
-      cartItemsList.appendChild(cartPlaceholder);
+        if (cartPlaceholder) {
+            cartItemsList.appendChild(cartPlaceholder);
+        }
       calculateBtn.style.display = 'none';
       return;
     }
@@ -115,6 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateBtn.style.display = 'block';
   }
 
+  // --- UPDATED AND NEW FUNCTIONS ---
+
   function calculateAndDisplayResults() {
     let totalCo2 = 0;
     let totalWater = 0;
@@ -132,8 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    // NEW: Using the more granular comparison functions
     const co2Comparison = getCo2Comparison(totalCo2);
-    const waterComparison = `Det tilsvarer drikkevann for én person i <strong>${Math.round(totalWater / comparisonData.dailyDrinkingWater).toLocaleString('nb-NO')}</strong> dager.`;
+    const waterComparison = getWaterComparison(totalWater);
 
     resultBox.innerHTML = `
       <h3>Ditt resultat</h3>
@@ -143,46 +131,76 @@ document.addEventListener('DOMContentLoaded', () => {
         <li><strong>Totalt vannforbruk:</strong> ${Math.round(totalWater).toLocaleString('nb-NO')} liter. ${waterComparison}</li>
         <li><strong>Lengste nedbrytningstid:</strong> Det vil ta opptil <strong>${maxDecay} år</strong> før plagget med lengst nedbrytningstid forsvinner i naturen.</li>
       </ul>
+      <div class="action-tips">
+          <h4>Hva kan du gjøre?</h4>
+          <p>For å redusere fotavtrykket kan du vurdere å kjøpe brukt, reparere klær du allerede har, og velge materialer med lavere påvirkning. [cite_start]For syntetiske plagg, bruk en vaskepose for å fange opp mikroplast. [cite: 25, 49]</p>
+      </div>
     `;
     resultBox.style.display = 'block';
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   }
-  
+
+  // NEW: More granular CO2 comparison
   function getCo2Comparison(co2) {
-      const { flightOsloBergen, flightOsloSpain, flightOsloThailand } = comparisonData;
+      const kmPerKgCo2 = 7.5; // Approx. km for 1 kg CO2 from a modern gasoline car
+      const flightOsloBergen = 70; [cite_start]// kg CO2 [cite: 7]
+      const flightOsloThailand = 1100; // kg CO2
       
-      if (co2 > flightOsloThailand * 0.75) {
+      if (co2 >= flightOsloThailand * 0.5) {
           const numFlights = (co2 / flightOsloThailand).toFixed(1);
           return `Det tilsvarer ca. <strong>${numFlights}</strong> flyreiser fra Oslo til Thailand.`;
       }
-      if (co2 > flightOsloSpain * 0.75) {
-          const numFlights = (co2 / flightOsloSpain).toFixed(1);
-          return `Det tilsvarer ca. <strong>${numFlights}</strong> flyreiser fra Oslo til Spania.`;
-      }
-      if (co2 > flightOsloBergen * 0.75) {
+      if (co2 >= flightOsloBergen * 0.5) {
           const numFlights = (co2 / flightOsloBergen).toFixed(1);
           return `Det tilsvarer ca. <strong>${numFlights}</strong> flyreiser fra Oslo til Bergen.`;
       }
+      if (co2 > 1) {
+          const km = (co2 * kmPerKgCo2).toFixed(0);
+          return `Det tilsvarer en kjøretur på ca. [cite_start]<strong>${km} km</strong> med en bensinbil. [cite: 35]`;
+      }
       if (co2 > 0) {
-        const percentageOfFlight = ((co2 / flightOsloBergen) * 100).toFixed(0);
-        return `Det er <strong>${percentageOfFlight}%</strong> av utslippet fra en flyreise mellom Oslo og Bergen.`;
+          return `Selv små utslipp summerer seg opp over tid.`;
       }
       return "";
   }
   
-  function submitDataForResearch(data) {
-    console.log("Følgende data ville blitt sendt til en database:", data);
-    // **For a real application, you would add a backend call here.**
-    // Example:
-    // fetch('https://your-backend-api.com/submit-data', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(data)
-    // })
-    // .then(response => console.log('Data submitted successfully'))
-    // .catch(error => console.error('Error submitting data:', error));
+  // NEW: More granular water comparison
+  function getWaterComparison(water) {
+      const dailyDrinkingWater = 2; [cite_start]// Liters [cite: 13]
+      const showerWater = 100; [cite_start]// Liters for a 10-min shower [cite: 38]
+      const milkWater = 1000; [cite_start]// Liters for 1L of milk [cite: 41]
+
+      if (water >= 20000) {
+          const yearsOfWater = (water / (dailyDrinkingWater * 365)).toFixed(1);
+          return `Det er nok drikkevann for én person i <strong>${yearsOfWater} år</strong>.`;
+      }
+      if (water >= 5000) {
+          const showers = Math.round(water / showerWater);
+          return `Det tilsvarer vannforbruket til ca. [cite_start]<strong>${showers}</strong> dusjer på 10 minutter. [cite: 38]`;
+      }
+      if (water >= 1000) {
+          const milkLiters = Math.round(water / milkWater);
+          [cite_start]return `Det er nok vann til å produsere <strong>${milkLiters} liter</strong> melk. [cite: 41]`;
+      }
+      if (water > 0) {
+        const daysOfWater = Math.round(water / dailyDrinkingWater);
+        return `Det tilsvarer drikkevann for én person i <strong>${daysOfWater}</strong> dager.`;
+      }
+      return "";
+  }
+  
+  async function submitDataForResearch(data) {
+    try {
+        const { error } = await supabase
+            .from('submissions')
+            .insert([{ cart_data: data }]);
+        if (error) { throw error; }
+        console.log('Data submitted successfully to Supabase.');
+    } catch (error) {
+        console.error('Error submitting data to Supabase:', error.message);
+    }
   }
 
-  // Initial setup
-  renderCart(); // To show the initial empty message
+  // Initial render call
+  renderCart();
 });
